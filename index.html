@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CropGPT - Smart Farming Companion</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- App Container -->
+    <div id="app" class="app-container">
+
+
+        <!-- VIEW: HOME -->
+        <section id="view-home" class="view active">
+            <!-- Weather Widget -->
+            <div id="weather-widget" class="weather-card glass-panel">
+                <p data-i18n="loading_weather">Loading Weather...</p>
+            </div>
+
+            <div class="contact-card glass-panel">
+                <div class="contact-icon"><i class="fa-solid fa-headset"></i></div>
+                <div class="contact-info">
+                    <h3 data-i18n="kisan_helpline">Kisan Helpline</h3>
+                    <p>1800-180-1551</p>
+                </div>
+                <a href="tel:18001801551" class="call-btn" data-i18n="call">Call</a>
+            </div>
+
+            <div class="section-header">
+                <h2 data-i18n="my_crops">My Crops</h2>
+                <button class="add-btn-mini" onclick="navigateTo('add-crop')"><i class="fa-solid fa-plus"></i></button>
+            </div>
+
+            <div id="crops-list" class="crops-grid">
+                <!-- Crop Cards will be injected here -->
+                <div class="empty-state">
+                    <p data-i18n="no_crops">No crops added yet.</p>
+                    <button class="btn-primary" onclick="navigateTo('add-crop')" data-i18n="start_farming">Start
+                        Farming</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: ADD CROP WIZARD -->
+        <section id="view-add-crop" class="view">
+            <div class="wizard-header">
+                <button class="back-btn" onclick="navigateTo('home')"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 data-i18n="new_crop">New Crop</h2>
+            </div>
+
+            <div class="wizard-progress">
+                <div class="step active" data-step="1">1</div>
+                <div class="line"></div>
+                <div class="step" data-step="2">2</div>
+                <div class="line"></div>
+                <div class="step" data-step="3">3</div>
+            </div>
+
+            <form id="add-crop-form">
+                <!-- Step 1: Strategy -->
+                <div class="wizard-step active" id="step-1">
+                    <h3 data-i18n="crop_strategy">Crop Strategy</h3>
+                    <div class="form-group">
+                        <label data-i18n="crop_name">Crop Name</label>
+                        <select id="crop-name" required>
+                            <option value="" disabled selected data-i18n="select_crop">Select Crop</option>
+                            <option value="Wheat" data-i18n="wheat">Wheat</option>
+                            <option value="Rice" data-i18n="rice">Rice</option>
+                            <option value="Tomato" data-i18n="tomato">Tomato</option>
+                            <option value="Potato" data-i18n="potato">Potato</option>
+                            <option value="Cotton" data-i18n="cotton">Cotton</option>
+                            <option value="Other" data-i18n="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="variety_hybrid">Variety / Hybrid</label>
+                        <input type="text" id="crop-variety" placeholder="e.g., Sharbati, Hybrid-45">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="sowing_date">Sowing Date</label>
+                        <input type="date" id="crop-sowing-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="farming_method">Farming Method</label>
+                        <select id="crop-method">
+                            <option value="Organic" data-i18n="organic">Organic</option>
+                            <option value="Chemical" data-i18n="chemical">Chemical / Conventional</option>
+                            <option value="Mixed" data-i18n="mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="previous_crop">Previous Crop (Rotation)</label>
+                        <input type="text" id="crop-prev" placeholder="e.g., Mustard">
+                    </div>
+                    <div class="wizard-actions">
+                        <button type="button" class="btn-primary" onclick="nextStep(2)"><span
+                                data-i18n="next">Next</span> <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Environment -->
+                <div class="wizard-step" id="step-2">
+                    <h3 data-i18n="field_conditions">Field Conditions</h3>
+                    <div class="form-group">
+                        <label data-i18n="field_name">Field Name/ID</label>
+                        <input type="text" id="field-name" placeholder="e.g., Riverside Plot">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="area_acres">Area (Acres)</label>
+                        <input type="number" id="field-area" placeholder="0.0">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="soil_type">Soil Type</label>
+                        <select id="field-soil">
+                            <option value="Loamy" data-i18n="loamy">Loamy</option>
+                            <option value="Clay" data-i18n="clay">Clay</option>
+                            <option value="Sandy" data-i18n="sandy">Sandy</option>
+                            <option value="Black" data-i18n="black_soil">Black Soil</option>
+                            <option value="Red" data-i18n="red_soil">Red Soil</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="irrigation_source">Irrigation Source</label>
+                        <select id="field-irrigation">
+                            <option value="Rainfed" data-i18n="rainfed">Rain-fed</option>
+                            <option value="Borewell" data-i18n="borewell">Borewell</option>
+                            <option value="Canal" data-i18n="canal">Canal</option>
+                            <option value="Drip" data-i18n="drip">Drip Irrigation</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="water_source_details">Water Source Details</label>
+                        <input type="text" id="field-water-details" placeholder="e.g., 200ft Borewell, Good yield">
+                    </div>
+                    <div class="wizard-actions">
+                        <button type="button" class="btn-secondary" onclick="prevStep(1)" data-i18n="back">Back</button>
+                        <button type="button" class="btn-primary" onclick="nextStep(3)"><span
+                                data-i18n="next">Next</span> <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Resources -->
+                <div class="wizard-step" id="step-3">
+                    <h3 data-i18n="resources">Resources</h3>
+                    <div class="form-group">
+                        <label data-i18n="seed_quantity">Seed Quantity (kg)</label>
+                        <input type="number" id="resource-seeds" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="seed_treatment_done">Seed Treatment Done?</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="seed-treat" value="yes"> <span
+                                    data-i18n="yes">Yes</span></label>
+                            <label><input type="radio" name="seed-treat" value="no" checked> <span
+                                    data-i18n="no">No</span></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="expected_yield">Expected Yield (Quintals)</label>
+                        <input type="number" id="resource-yield" placeholder="0">
+                    </div>
+                    <div class="wizard-actions">
+                        <button type="button" class="btn-secondary" onclick="prevStep(2)" data-i18n="back">Back</button>
+                        <button type="submit" class="btn-success"><span data-i18n="finish_plant">Finish &
+                                Plant</span> <i class="fa-solid fa-check"></i></button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- VIEW: CROP DETAILS -->
+        <section id="view-crop-details" class="view">
+            <div class="details-header">
+                <button class="back-btn" onclick="navigateTo('home')"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2 id="detail-crop-name">Crop Name</h2>
+                <button class="qr-btn" onclick="showQRCode()"><i class="fa-solid fa-qrcode"></i></button>
+            </div>
+
+            <div class="crop-summary-card glass-panel">
+                <div class="summary-row">
+                    <span><i class="fa-solid fa-calendar"></i> <span data-i18n="sown">Sown</span>: <b
+                            id="detail-sown-date">-</b></span>
+                    <span><i class="fa-solid fa-clock"></i> <span data-i18n="age">Age</span>: <b id="detail-age">-</b>
+                        <span data-i18n="days">days</span></span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="detail-progress" style="width: 0%"></div>
+                </div>
+                <p class="status-text" id="detail-stage">Germination Stage</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchDetailTab('tasks')" data-i18n="tasks">Tasks</button>
+                <button class="tab-btn" onclick="switchDetailTab('logs')" data-i18n="logs">Logs</button>
+                <button class="tab-btn" onclick="switchDetailTab('info')" data-i18n="info">Info</button>
+            </div>
+
+            <div id="tab-tasks" class="detail-tab-content active">
+                <!-- AI suggestions will be injected here -->
+            </div>
+
+            <div id="tab-logs" class="detail-tab-content">
+                <button class="btn-outline full-width" onclick="addLog()"><i class="fa-solid fa-pen"></i> <span
+                        data-i18n="add_daily_log">Add Daily
+                        Log</span></button>
+                <div id="logs-list">
+                    <!-- Logs injected here -->
+                </div>
+            </div>
+
+            <div id="tab-info" class="detail-tab-content">
+                <div class="info-grid" id="detail-info-grid">
+                    <!-- Info injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: UPDATES -->
+        <section id="view-updates" class="view">
+            <div class="section-header">
+                <h2 data-i18n="latest_updates">Latest Agriculture Updates</h2>
+            </div>
+            <div id="news-container">
+                <!-- News Cards will be injected here -->
+            </div>
+        </section>
+
+        </main>
+
+        <!-- Bottom Navigation (2 buttons only) -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="navigateTo('home')" data-target="home">
+                <i class="fa-solid fa-house"></i>
+                <span data-i18n="home">Home</span>
+            </button>
+            <button class="nav-item" onclick="navigateTo('updates')" data-target="updates">
+                <i class="fa-solid fa-newspaper"></i>
+                <span data-i18n="updates">Updates</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qr-modal" class="modal hidden">
+        <div class="modal-content glass-panel">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3>Crop Passport</h3>
+            <div id="qrcode-container"></div>
+            <p class="qr-caption" data-i18n="scan_to_view">Scan to view crop details</p>
+            <button class="btn-primary" onclick="downloadQR()"><span data-i18n="download">Download</span> <i
+                    class="fa-solid fa-download"></i></button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="weather.js"></script>
+    <script src="ai.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
