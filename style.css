@@ -39,28 +39,29 @@ body {
 /* Layout */
 .app-container {
     max-width: 480px;
-    /* Mobile width constraint for desktop view */
     margin: 0 auto;
     background: transparent;
     min-height: 100vh;
     position: relative;
     padding-bottom: 80px;
-    /* Space for bottom nav */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
 /* Header */
 .app-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
     position: sticky;
     top: 0;
     z-index: 100;
     border-bottom: 1px solid var(--glass-border);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
 }
 
 .logo {
@@ -72,22 +73,52 @@ body {
     gap: 0.5rem;
 }
 
-.icon-btn {
-    background: none;
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.lang-btn {
+    background: var(--primary-color);
+    color: var(--white);
     border: none;
-    font-size: 1.2rem;
-    color: var(--text-dark);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-main);
+}
+
+.lang-btn:hover {
+    background: var(--primary-light);
+}
+
+.reset-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reset-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
 }
 
 /* Main Content */
-#main-content {
-    padding: 1.5rem;
-}
-
 .view {
     display: none;
     animation: fadeIn 0.3s ease-in-out;
+    padding: 1.5rem;
 }
 
 .view.active {
@@ -115,6 +146,36 @@ body {
     padding: 1.25rem;
     box-shadow: var(--shadow);
     margin-bottom: 1rem;
+}
+
+/* Weather Widget */
+.weather-card {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.weather-icon {
+    font-size: 2.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.weather-info .temp {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.weather-info .desc {
+    font-size: 0.9rem;
+    opacity: 0.9;
 }
 
 /* Contact Card */
@@ -174,6 +235,11 @@ body {
 }
 
 /* Crop Cards */
+.crops-grid {
+    display: grid;
+    gap: 1rem;
+}
+
 .crop-card {
     cursor: pointer;
     transition: transform 0.2s;
@@ -221,6 +287,11 @@ body {
     gap: 1rem;
 }
 
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+}
+
 /* Buttons */
 .btn-primary {
     background: var(--primary-color);
@@ -233,6 +304,7 @@ body {
     cursor: pointer;
     width: 100%;
     box-shadow: var(--shadow);
+    font-family: var(--font-main);
 }
 
 .btn-secondary {
@@ -244,6 +316,7 @@ body {
     font-weight: 600;
     font-size: 1rem;
     cursor: pointer;
+    font-family: var(--font-main);
 }
 
 .btn-success {
@@ -255,6 +328,23 @@ body {
     font-weight: 600;
     font-size: 1rem;
     cursor: pointer;
+    width: 100%;
+    font-family: var(--font-main);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: var(--font-main);
+}
+
+.full-width {
     width: 100%;
 }
 
@@ -357,6 +447,18 @@ body {
     box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.1);
 }
 
+.radio-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
 .wizard-actions {
     display: flex;
     gap: 1rem;
@@ -426,6 +528,7 @@ body {
     color: var(--text-light);
     cursor: pointer;
     position: relative;
+    font-family: var(--font-main);
 }
 
 .tab-btn.active {
@@ -462,12 +565,6 @@ body {
     box-shadow: var(--shadow);
 }
 
-.task-check {
-    color: var(--text-light);
-    font-size: 1.2rem;
-    cursor: pointer;
-}
-
 .task-content h4 {
     margin-bottom: 0.2rem;
 }
@@ -477,7 +574,23 @@ body {
     color: var(--text-light);
 }
 
-/* Updates */
+.info-grid {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.info-item {
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+/* Updates / News */
+.news-card {
+    position: relative;
+}
+
 .tag {
     display: inline-block;
     padding: 0.2rem 0.6rem;
@@ -504,6 +617,7 @@ body {
 
 .news-card h3 {
     margin-bottom: 0.5rem;
+    font-size: 1.1rem;
 }
 
 .news-card p {
@@ -521,7 +635,9 @@ body {
 .bottom-nav {
     position: fixed;
     bottom: 0;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 480px;
     width: 100%;
     background: var(--white);
     display: flex;
@@ -541,6 +657,7 @@ body {
     color: var(--text-light);
     cursor: pointer;
     font-size: 0.8rem;
+    font-family: var(--font-main);
 }
 
 .nav-item i {
@@ -594,76 +711,4 @@ body {
 .qr-caption {
     margin-bottom: 1.5rem;
     color: var(--text-light);
-}
-
-/* Auth UI */
-.auth-container {
-    text-align: center;
-    margin-top: 2rem;
-    padding: 2rem;
-}
-
-.auth-container h2 {
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
-}
-
-.auth-container p {
-    color: var(--text-light);
-    margin-bottom: 2rem;
-}
-
-.auth-tabs {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    border-bottom: 2px solid #e5e7eb;
-}
-
-.auth-tab {
-    background: none;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    color: var(--text-light);
-    cursor: pointer;
-    font-weight: 600;
-    position: relative;
-    top: 2px;
-}
-
-.auth-tab.active {
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
-}
-
-/* Weather Widget */
-.weather-card {
-    background: linear-gradient(135deg, #3b82f6, #06b6d4);
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.weather-icon {
-    font-size: 2.5rem;
-    background: rgba(255, 255, 255, 0.2);
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
-.weather-info .temp {
-    font-size: 2rem;
-    font-weight: 700;
-}
-
-.weather-info .desc {
-    font-size: 0.9rem;
-    opacity: 0.9;
 }

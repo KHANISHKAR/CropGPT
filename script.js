@@ -348,7 +348,10 @@ function navigateTo(viewName) {
         views.addCrop.classList.add('active');
     }
     if (viewName === 'crop-details') views.cropDetails.classList.add('active');
-    if (viewName === 'updates') views.updates.classList.add('active');
+    if (viewName === 'updates') {
+        views.updates.classList.add('active');
+        renderNews(); // Render news when updates view is shown
+    }
 
     // Update Bottom Nav
     navItems.forEach(item => {
