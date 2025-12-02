@@ -70,7 +70,14 @@ const translations = {
         germination_stage: "Germination Stage",
         ai_advice: "AI Advice",
         crop_added: "Crop added successfully!",
-        daily_log_soon: "Daily log feature coming soon!",
+        daily_log_form_title: "Daily Log Entry",
+        sowed_today: "Sowed Today?",
+        irrigated_today: "Irrigated Today?",
+        description: "Description",
+        submit_log: "Submit Log",
+        cancel: "Cancel",
+        no_logs_yet: "No logs yet. Add your first entry!",
+        log_added: "Log entry added successfully!",
         wind: "Wind",
         location_denied: "Location access denied.",
         geo_not_supported: "Geolocation not supported.",
@@ -151,7 +158,14 @@ const translations = {
         germination_stage: "முளைக்கும் பருவம்",
         ai_advice: "AI ஆலோசனை",
         crop_added: "பயிர் வெற்றிகரமாக சேர்க்கப்பட்டது!",
-        daily_log_soon: "தினசரி குறிப்பு வசதி விரைவில் வரும்!",
+        daily_log_form_title: "தினசரி பதிவு",
+        sowed_today: "இன்று விதைத்தீர்களா?",
+        irrigated_today: "இன்று நீர் பாய்ச்சினீர்களா?",
+        description: "விவரம்",
+        submit_log: "பதிவைச் சேர்",
+        cancel: "ரத்து செய்",
+        no_logs_yet: "இதுவரை பதிவுகள் இல்லை. உங்கள் முதல் பதிவைச் சேர்க்கவும்!",
+        log_added: "பதிவு வெற்றிகரமாக சேர்க்கப்பட்டது!",
         wind: "காற்று",
         location_denied: "இருப்பிட அணுகல் மறுக்கப்பட்டது.",
         geo_not_supported: "புவிஇருப்பிடம் ஆதரிக்கப்படவில்லை.",
@@ -483,7 +497,113 @@ function calculateAge(dateString) {
     return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
-// Crop Details
+// Daily Log Functions
+function addLog() {
+    const modal = document.getElementById('daily-log-modal');
+    modal.classList.remove('hidden');
+    // Reset form
+    document.getElementById('daily-log-form').reset();
+}
+
+function closeDailyLogModal() {
+    const modal = document.getElementById('daily-log-modal');
+    modal.classList.add('hidden');
+}
+
+function submitDailyLog(event) {
+    event.preventDefault();
+
+    const crop = state.crops.find(c => c.id === state.currentCropId);
+    if (!crop) return;
+
+    // Get form values
+    const sowed = document.getElementById('log-sowed').checked;
+    const irrigated = document.getElementById('log-irrigated').checked;
+    const description = document.getElementById('log-description').value.trim();
+
+    // Create log entry
+    const logEntry = {
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        sowed: sowed,
+        irrigated: irrigated,
+        description: description
+    };
+
+    // Initialize logs array if it doesn't exist
+    if (!crop.logs) {
+        crop.logs = [];
+    }
+
+    // Add log entry
+    crop.logs.unshift(logEntry); // Add to beginning for reverse chronological order
+
+    // Save to localStorage
+    saveCropUpdate(crop);
+
+    // Close modal
+    closeDailyLogModal();
+
+    // Re-render logs
+    renderLogs();
+
+    // Show success message
+    alert(translations[state.language].log_added);
+}
+
+function saveCropUpdate(updatedCrop) {
+    // Find and update the crop in state
+    const index = state.crops.findIndex(c => c.id === updatedCrop.id);
+    if (index !== -1) {
+        state.crops[index] = updatedCrop;
+    }
+
+    // Save to localStorage
+    localStorage.setItem('crops', JSON.stringify(state.crops));
+}
+
+function renderLogs() {
+    const container = document.getElementById('logs-list');
+    const crop = state.crops.find(c => c.id === state.currentCropId);
+
+    if (!crop || !crop.logs || crop.logs.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state" style="text-align: center; padding: 2rem; color: var(--text-light);">
+                <p data-i18n="no_logs_yet">${translations[state.language].no_logs_yet}</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = '';
+
+    crop.logs.forEach(log => {
+        const logCard = document.createElement('div');
+        logCard.className = 'log-card glass-panel';
+
+        const logDate = new Date(log.date);
+        const formattedDate = logDate.toLocaleDateString();
+        const formattedTime = logDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        // Build activities list
+        let activities = [];
+        if (log.sowed) activities.push(`<span class="activity-tag sowed"><i class="fa-solid fa-seedling"></i> ${translations[state.language].sowed_today}</span>`);
+        if (log.irrigated) activities.push(`<span class="activity-tag irrigated"><i class="fa-solid fa-droplet"></i> ${translations[state.language].irrigated_today}</span>`);
+
+        logCard.innerHTML = `
+            <div class="log-header">
+                <span class="log-date"><i class="fa-solid fa-calendar"></i> ${formattedDate}</span>
+                <span class="log-time"><i class="fa-solid fa-clock"></i> ${formattedTime}</span>
+            </div>
+            ${activities.length > 0 ? `<div class="log-activities">${activities.join(' ')}</div>` : ''}
+            ${log.description ? `<p class="log-description">${log.description}</p>` : ''}
+        `;
+
+        container.appendChild(logCard);
+    });
+}
+
+// Update openCropDetails to call renderLogs
 function openCropDetails(id) {
     const crop = state.crops.find(c => c.id === id);
     if (!crop) return;
@@ -530,6 +650,9 @@ function openCropDetails(id) {
         </div>
     `;
 
+    // Render logs
+    renderLogs();
+
     navigateTo('crop-details');
 }
 
@@ -545,33 +668,13 @@ function switchDetailTab(tabName) {
     document.getElementById(`tab-${tabName}`).classList.add('active');
 }
 
-// QR Code
+// QR Code - Display static image
 function showQRCode() {
-    const crop = state.crops.find(c => c.id === state.currentCropId);
-    if (!crop) return;
-
     const modal = document.getElementById('qr-modal');
     const container = document.getElementById('qrcode-container');
-    container.innerHTML = '';
 
-    const data = `
-CropGPT Passport
-----------------
-Crop: ${crop.name}
-Variety: ${crop.variety}
-Sown: ${crop.sowing_date}
-Field: ${crop.field_name}
-ID: ${crop.id}
-    `.trim();
-
-    new QRCode(container, {
-        text: data,
-        width: 180,
-        height: 180,
-        colorDark: "#0f5132",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
-    });
+    // Clear container and display static QR image
+    container.innerHTML = '<img src="qr.png" alt="QR Code" style="width: 220px; height: 220px; display: block; margin: 0 auto;">';
 
     modal.classList.remove('hidden');
 }
@@ -590,15 +693,16 @@ function downloadQR() {
     }
 }
 
-// Placeholder for addLog function
-function addLog() {
-    alert(translations[state.language].daily_log_soon);
-}
-
 // Modal close on outside click
 window.onclick = function (event) {
-    const modal = document.getElementById('qr-modal');
-    if (event.target === modal) {
+    const qrModal = document.getElementById('qr-modal');
+    const logModal = document.getElementById('daily-log-modal');
+
+    if (event.target === qrModal) {
         closeModal();
     }
+    if (event.target === logModal) {
+        closeDailyLogModal();
+    }
 };
+

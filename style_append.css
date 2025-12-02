@@ -1,0 +1,85 @@
+/* Daily Log Styles */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    resize: vertical;
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.1);
+}
+
+.log-card {
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.log-date,
+.log-time {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.log-activities {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.activity-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.activity-tag.sowed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.activity-tag.irrigated {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.log-description {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    line-height: 1.5;
+    margin: 0;
+}
