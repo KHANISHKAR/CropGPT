@@ -674,7 +674,7 @@ function showQRCode() {
     const container = document.getElementById('qrcode-container');
 
     // Clear container and display static QR image
-    container.innerHTML = '<img src="qr.png" alt="QR Code" style="width: 220px; height: 220px; display: block; margin: 0 auto;">';
+    container.innerHTML = '<img src="QR.png" alt="QR Code" style="width: 220px; height: 220px; display: block; margin: 0 auto;">';
 
     modal.classList.remove('hidden');
 }
